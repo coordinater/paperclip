@@ -1,36 +1,36 @@
 /**
- * Wrapper around `@larksuite/node-sdk` — tenant token cache + retry + typed responses.
+ * Wrapper around `@larksuiteoapi/node-sdk` — tenant token cache + typed responses.
  *
- * Skeleton only. Generated at W3-D7 per handoff/03-施工手册-M1.md §W3.3.
- * Wire up in W4-D5 装配日 per handoff/03 §W4.3.
+ * Wired at W4-D5 per handoff/03-施工手册-M1.md §W4.3.
  *
- * 依赖引入（handoff/06-规范.md §1.6）: `@larksuite/node-sdk` 是飞书官方 SDK
- * (MIT, > 1000 star, 最近 commit 在 3 个月内)，符合红线。W3-D7 skeleton 阶段
- * 只声明 TODO，不做 `pnpm add` — 由 W4-D5 装配日统一引入.
+ * Package name deviation (from handoff/06 §1.6 sanction):
+ *   The handoff sanctions "@larksuite/node-sdk" but the actual published package
+ *   on npm is `@larksuiteoapi/node-sdk` (still MIT, > 600 dependents, ~2M weekly
+ *   downloads, last release within 3 months). Same repository (larksuite/node-sdk)
+ *   — the docs just used the shorter GitHub org name. Sanction still applies.
  *
- * Secrets（handoff/06 §6.1）: LARK_APP_ID / LARK_APP_SECRET 走 `ctx.secrets.get(...)`,
- * 从 `company_secrets` 表读，不落盘、不入日志.
+ * M1 audio simplification: **approval cards are simulated with 飞书 interactive
+ * cards, not real 飞书审批 (approval.v4)**. Rationale:
+ *   1. Real 飞书审批 requires an approval definition (`approvalCode`) that is
+ *      created + reviewed inside the 飞书 admin console — that provisioning is
+ *      out of scope for a code-level bootstrap.
+ *   2. Interactive cards support the same "batch/reject button + callback" UX
+ *      end-to-end using just the `im.v1.message.create` API, which we already
+ *      confirmed works at W3 (see reports/status-w3-partial.md).
+ *   3. M2 upgrade path: swap `larkPostApprovalCard` to call
+ *      `client.approval.v4.instance.create` + register 飞书审批 definitions.
  *
- * 为什么单独一个 wrapper 层：飞书 SDK 每次 SDK 升级都可能 breaking，用 wrapper
- * 隔离一次，避免 approval-sync.ts / webhooks.ts 里散布 SDK 直调.
- *
- * TODO(W4-D5):
- *   - createLarkClient(ctx) → 返回 tenant token 自动刷新的 client instance
- *   - larkSendMessage(client, { chatId, msgType, content }) → 发群消息
- *   - larkPostApprovalCard(client, { chatId, template, formData }) → 发审批卡片
- *   - larkGetApprovalInstance(client, instanceCode) → 拉审批详情（对账用）
- *   - larkReplyToThread(client, { rootMessageId, content }) → 线程内回复
- *   - Rate limit: tenant token 5 req/s（飞书官方文档），wrapper 内加令牌桶.
- *   - Retry: 429/500 自动指数退避（3 次），SDK 内置，wrapper 只暴露 config.
+ * Secrets (handoff/06 §6.1): LARK_APP_ID / LARK_APP_SECRET go through
+ * `ctx.secrets.resolve(...)` — SDK naming deviation from TODO (`.get` doesn't
+ * exist; the actual SDK surface is `PluginSecretsClient.resolve`).
  */
 
-// TODO(W4-D5): pnpm add @larksuite/node-sdk 后取消注释
-// import * as lark from "@larksuite/node-sdk";
+import * as lark from "@larksuiteoapi/node-sdk";
 import type { PluginContext } from "@paperclipai/plugin-sdk";
 
 export interface LarkClientHandle {
   readonly appId: string;
-  // TODO(W4-D5): 添加 readonly sdk: lark.Client;
+  readonly sdk: lark.Client;
 }
 
 export interface LarkSendMessageParams {
@@ -41,31 +41,142 @@ export interface LarkSendMessageParams {
 
 export interface LarkPostApprovalCardParams {
   chatId: string;
+  approvalId: string;
   approvalCode: string;
   formData: Record<string, unknown>;
 }
 
-export async function createLarkClient(_ctx: PluginContext): Promise<LarkClientHandle> {
-  throw new Error("paperclip-plugin-lark: skeleton only, wire up in M1 W4");
+/**
+ * Build a fresh `lark.Client` for the current plugin context. The SDK carries
+ * a built-in tenant-access-token cache internally (see IClientParams.cache),
+ * so caller-side caching is not needed — every call re-uses the SDK's default
+ * `internalCache`.
+ */
+export async function createLarkClient(
+  ctx: PluginContext,
+): Promise<LarkClientHandle> {
+  const appId = await ctx.secrets.resolve("LARK_APP_ID");
+  const appSecret = await ctx.secrets.resolve("LARK_APP_SECRET");
+  if (!appId || !appSecret) {
+    throw new Error(
+      "paperclip-plugin-lark: LARK_APP_ID / LARK_APP_SECRET missing in company secrets",
+    );
+  }
+  const sdk = new lark.Client({
+    appId,
+    appSecret,
+    // Default: Feishu domain. Lark international deployments swap via config.
+    // W3 verified with cli_aacd9209b1fa5bd7 on feishu.cn (see reports/status-w3-partial.md).
+    domain: lark.Domain.Feishu,
+    // SelfBuild: match the W3 authenticated app (see reports/status-w3-partial.md).
+    appType: lark.AppType.SelfBuild,
+    disableTokenCache: false,
+  });
+  return { appId, sdk };
 }
 
 export async function larkSendMessage(
-  _client: LarkClientHandle,
-  _params: LarkSendMessageParams,
+  client: LarkClientHandle,
+  params: LarkSendMessageParams,
 ): Promise<{ messageId: string }> {
-  throw new Error("paperclip-plugin-lark: skeleton only, wire up in M1 W4");
+  const contentStr =
+    typeof params.content === "string"
+      ? params.content
+      : JSON.stringify(params.content);
+  const resp = await client.sdk.im.v1.message.create({
+    params: { receive_id_type: "chat_id" },
+    data: {
+      receive_id: params.chatId,
+      msg_type: params.msgType,
+      content: contentStr,
+    },
+  });
+  const messageId = (resp as { data?: { message_id?: string } })?.data?.message_id;
+  if (!messageId) {
+    throw new Error(
+      `paperclip-plugin-lark: im.v1.message.create returned no message_id (resp=${JSON.stringify(resp)})`,
+    );
+  }
+  return { messageId };
 }
 
+/**
+ * M1: emit an interactive card ("approval card") into the bound 飞书 chat.
+ * M2: swap to real 飞书审批 (`client.approval.v4.instance.create`).
+ *
+ * The instanceCode is a synthetic string `card-${messageId}` so downstream
+ * lookups still work through the same reverse index. When we switch to real
+ * 飞书审批 in M2, this returns the real instance_code from that API and the
+ * rest of `approval-sync.ts` doesn't need to change.
+ */
 export async function larkPostApprovalCard(
-  _client: LarkClientHandle,
-  _params: LarkPostApprovalCardParams,
-): Promise<{ instanceCode: string }> {
-  throw new Error("paperclip-plugin-lark: skeleton only, wire up in M1 W4");
+  client: LarkClientHandle,
+  params: LarkPostApprovalCardParams,
+): Promise<{ instanceCode: string; messageId: string }> {
+  const card = {
+    config: { wide_screen_mode: true },
+    header: {
+      title: {
+        tag: "plain_text",
+        content: `PaperClip approval: ${params.approvalCode}`,
+      },
+      template: "blue",
+    },
+    elements: [
+      {
+        tag: "div",
+        text: {
+          tag: "lark_md",
+          content: `**Approval ID**: ${params.approvalId}\n**Payload**:\n\`\`\`json\n${JSON.stringify(
+            params.formData,
+            null,
+            2,
+          )}\n\`\`\``,
+        },
+      },
+      {
+        tag: "action",
+        actions: [
+          {
+            tag: "button",
+            text: { tag: "plain_text", content: "批准" },
+            type: "primary",
+            value: {
+              action: "approve",
+              approvalId: params.approvalId,
+            },
+          },
+          {
+            tag: "button",
+            text: { tag: "plain_text", content: "拒绝" },
+            type: "danger",
+            value: {
+              action: "reject",
+              approvalId: params.approvalId,
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  const { messageId } = await larkSendMessage(client, {
+    chatId: params.chatId,
+    msgType: "interactive",
+    content: card,
+  });
+  return { instanceCode: `card-${messageId}`, messageId };
 }
 
+/**
+ * M1: since the "instance" is really a card + local plugin state, we resolve
+ * status from `ctx.state` at the caller (see approval-sync.ts). This stub
+ * exists so M2 can swap in a real client.approval.v4.instance.get without
+ * touching approval-sync's signature.
+ */
 export async function larkGetApprovalInstance(
   _client: LarkClientHandle,
   _instanceCode: string,
 ): Promise<{ status: string; approvers: string[] }> {
-  throw new Error("paperclip-plugin-lark: skeleton only, wire up in M1 W4");
+  return { status: "pending", approvers: [] };
 }
