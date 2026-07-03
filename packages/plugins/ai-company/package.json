@@ -16,6 +16,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "e2e": "tsx scripts/e2e-install-skill.ts"
+    "e2e": "tsx scripts/e2e-install-skill.ts",
+    "install-m1-skills": "tsx scripts/install-m1-skills.ts"
   }
 }
