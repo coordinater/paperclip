@@ -24,6 +24,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "e2e": "tsx scripts/e2e-install-skill.ts",
-    "install-m1-skills": "tsx scripts/install-m1-skills.ts"
+    "install-m1-skills": "tsx scripts/install-m1-skills.ts",
+    "install-m2-w5-skills": "tsx scripts/install-m2-w5-skills.ts"
   }
 }
