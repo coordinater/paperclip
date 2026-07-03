@@ -1,0 +1,21 @@
+{
+  "name": "@ai-company/paperclip-plugin-ai-company",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "AI 公司项目集合 plugin —— L1 缓冲（Data + API 层）+ install_skill 端点。handoff/06 §2.",
+  "keywords": ["paperclip", "plugin", "ai-company", "buffer"],
+  "dependencies": {
+    "@paperclipai/db": "workspace:*",
+    "drizzle-orm": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "^4",
+    "typescript": "^5.9"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "e2e": "tsx scripts/e2e-install-skill.ts"
+  }
+}

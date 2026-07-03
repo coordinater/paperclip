@@ -27,6 +27,10 @@ export const companySkills = pgTable(
     sourceLocator: text("source_locator"),
     sourceRef: text("source_ref"),
     trustLevel: text("trust_level").notNull().default("markdown_only"),
+    // ai-company patch (handoff/02 §D1 sanctioned core exception #1):
+    // D18 供应链来源信任分档；与 trustLevel（内容执行范围信任）语义正交。
+    // SQL 列由 packages/plugins/ai-company/migrations/0002 建 (W2-D4)。
+    supplyChainTrust: text("supply_chain_trust").notNull().default("community"),
     compatibility: text("compatibility").notNull().default("compatible"),
     fileInventory: jsonb("file_inventory").$type<Array<Record<string, unknown>>>().notNull().default([]),
     iconUrl: text("icon_url"),

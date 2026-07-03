@@ -303,6 +303,8 @@ function selectCompanySkillColumns() {
     sourceLocator: companySkills.sourceLocator,
     sourceRef: companySkills.sourceRef,
     trustLevel: companySkills.trustLevel,
+    // ai-company patch (handoff/02 §D1 sanctioned)
+    supplyChainTrust: companySkills.supplyChainTrust,
     compatibility: companySkills.compatibility,
     fileInventory: companySkills.fileInventory,
     iconUrl: companySkills.iconUrl,
