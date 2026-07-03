@@ -540,6 +540,9 @@ export const APPROVAL_TYPES = [
   "approve_ceo_strategy",
   "budget_override_required",
   "request_board_approval",
+  // ai-company patch (handoff/02 §D1 sanctioned core exception #2 of 2):
+  // D18 供应链治理强制门禁——所有 skill install（含 D18=5）必走 approval。
+  "install_skill",
 ] as const;
 export type ApprovalType = (typeof APPROVAL_TYPES)[number];
 
