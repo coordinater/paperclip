@@ -1,0 +1,3 @@
+# experimental/ — 实验路径，随时可改可删（handoff/06 §2.2）。
+# M3+ 首个占位：magis-lite/hire.ts。
+# 下游必须显式声明依赖 experimental 才能引用；出问题不赔。
