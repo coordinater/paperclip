@@ -47,6 +47,7 @@ import { assetRoutes } from "./routes/assets.js";
 import { accessRoutes } from "./routes/access.js";
 import { pluginRoutes } from "./routes/plugins.js";
 import { adapterRoutes } from "./routes/adapters.js";
+import { aiCompanyPluginRoutes } from "./routes/ai-company-plugin.js";
 import { pluginUiStaticRoutes } from "./routes/plugin-ui-static.js";
 import { readBrandedStaticIndexHtml } from "./static-index-html.js";
 import { applyUiBranding } from "./ui-branding.js";
@@ -323,6 +324,8 @@ export async function createApp(
     ),
   );
   api.use(adapterRoutes());
+  // ai-company plugin API 层（handoff/06 §2.2）—— 路径 /api/ai-company/v1/*
+  api.use(aiCompanyPluginRoutes(db));
   api.use(
     accessRoutes(db, {
       deploymentMode: opts.deploymentMode,
