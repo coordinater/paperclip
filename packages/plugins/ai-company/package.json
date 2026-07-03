@@ -12,9 +12,12 @@
   "dependencies": {
     "@paperclipai/db": "workspace:*",
     "@paperclipai/plugin-sdk": "workspace:*",
-    "drizzle-orm": "*"
+    "drizzle-orm": "*",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
+    "@paperclipai/shared": "workspace:*",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^22",
     "tsx": "^4",
     "typescript": "^5.9",

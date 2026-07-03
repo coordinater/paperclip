@@ -15,6 +15,8 @@
 | 1 | `workspace-runtime-services.yaml` | Canonical `.paperclip.yaml` 片段——services + jobs 定义 |
 | 2 | `claude-code-adapter-env.md` | Claude Code adapter env 里 pyrefly 集成方法 |
 | 3 | `install-side-cars.sh` | 团队本机装 codebase-memory-mcp + pyrefly 一键脚本 |
+| 4 | `loader.ts` | TS loader —— 读 yaml，返回 typed `AiCompanyRuntimeConfig`；供 seeder / CLI / 测试 消费 |
+| 5 | `loader.test.ts` | 8 vitest —— 验证 yaml 结构 + 与主线 `listWorkspaceServiceCommandDefinitions` / `matchWorkspaceRuntimeServiceToCommand` 契约 interop |
 
 ## Wire-up 流程（团队入驻时执行）
 
@@ -43,7 +45,14 @@ cd packages/plugins/ai-company/runtime-config
 
 **W2-D7 (pyrefly)**: Python type verifier · agent 触发时 subprocess 调 · 集成到 claude-code adapter env (PATH + optional MCP wrap · 视 adapter 配置)
 
-**Sanctioned deviation** (per `handoff/reports/deviations.md`)：M1 阶段 wire-up 停在**配置层**（提供 canonical template + docs），实际 per-workspace 落地由 M2 team 入驻做。M1 §W4.6 DoD "三大红旗" memory 部分由 cognee 承担 (workspace-agnostic 全局 side-car)，codebase-memory-mcp 是 workspace-scoped 补充层。
+**M1 wire-up 边界**：本 wire-up 包含 (a) canonical yaml (b) TS loader + 8 vitest 证明 yaml 能被 paperclip 主线 `listWorkspaceServiceCommandDefinitions` 正确消费 (c) 装配脚本 (d) adapter env 文档。真 per-workspace 落地依赖已建 project workspace + supervisor —— 团队入驻真业务时把 yaml copy 到目标 `.paperclip.yaml` 即可，无需再改本 plugin。M1 §W4.6 DoD "三大红旗" memory 部分由 cognee 承担 (workspace-agnostic 全局 side-car)，codebase-memory-mcp 是 workspace-scoped 补充层。
+
+**测试**：
+
+```bash
+pnpm --filter @ai-company/paperclip-plugin-ai-company test
+# 22 tests：14 middleware + 8 runtime-config loader
+```
 
 ## 与主线 workspace_runtime_services 表关系
 
