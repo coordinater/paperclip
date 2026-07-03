@@ -1,13 +1,14 @@
 /**
  * Batch install M1 skills via installSkillHandler.
  *
- * 装 6 个 skill：
- *   W2-D8 skill-creator    (Anthropic, D18=5)
- *   W2-D9 mcp-builder       (Anthropic, D18=5)
- *   W3-D2 webapp-testing   (Anthropic, D18=5)
- *   W3-D3 frontend-design  (Anthropic, D18=5)
- *   W3-D4 seo-audit        (AgriciDaniel/claude-seo 代表, D18=4)
- *   W3-D5 blog-google      (AgriciDaniel/claude-blog 代表, D18=4)
+ * 装 7 个 skill：
+ *   W2-D8 skill-creator                     (Anthropic, D18=5)
+ *   W2-D9 mcp-builder                        (Anthropic, D18=5)
+ *   W3-D2 webapp-testing                    (Anthropic, D18=5)
+ *   W3-D3 frontend-design                   (Anthropic, D18=5)
+ *   W3-D4 seo-audit                         (AgriciDaniel/claude-seo 代表, D18=4)
+ *   W3-D5 blog-google                       (AgriciDaniel/claude-blog 代表, D18=4)
+ *   W4-D1 comprehensive-review-code-reviewer (wshobson/agents 代表, D18=3 → pending 审批)
  *
  * 用一个专属 test company "ai-company-m1"，每次跑时先清空该 company 的 skill/approval/log。
  *
@@ -94,6 +95,18 @@ const M1_SKILLS: SkillManifest[] = [
     supplyChainTrust: "curated",
     justification:
       "AgriciDaniel/claude-blog/skills/blog-google · 1265 stars + MIT + 5-gate Blog Delivery Contract 兼 D18=4 边界，bundle 代表 skill",
+  },
+  {
+    // handoff/03 §W4.2 W4-D1 原写 "code-review D18=5"，但 anthropics/skills 上游无此 skill。
+    // 决策 D-M1-14：改用 wshobson/agents/plugins/comprehensive-review 代表 skill，D18=3 走 pending
+    // 审批分支。同时首次真实测试 install API 的 pending → 用户审批 → approved 全链路（前 6 个都是
+    // D18=5 auto-approve，pending 分支从未被生产数据打过）。
+    wave: "W4-D1",
+    sourcePath: `${SIDECAR_ROOT}/wshobson-agents/plugins/comprehensive-review/agents/code-reviewer.md`,
+    d18Score: 3,
+    supplyChainTrust: "community",
+    justification:
+      "wshobson/agents/plugins/comprehensive-review/agents/code-reviewer · MIT + Seth Hobson 88 plugins/194 agents marketplace · D18=3 中活跃社区（handoff/06 §3.1）；M1 verifier 覆盖 + install API pending 分支覆盖双目的",
   },
 ];
 
