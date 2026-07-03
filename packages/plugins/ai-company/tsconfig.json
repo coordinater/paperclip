@@ -14,8 +14,9 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node", "vitest"]
   },
-  "include": ["api/**/*.ts"],
+  "include": ["api/**/*.ts", "middleware/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

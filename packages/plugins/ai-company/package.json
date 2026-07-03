@@ -5,17 +5,24 @@
   "type": "module",
   "description": "AI 公司项目集合 plugin —— L1 缓冲（Data + API 层）+ install_skill 端点。handoff/06 §2.",
   "keywords": ["paperclip", "plugin", "ai-company", "buffer"],
+  "exports": {
+    "./install-skill-handler": "./api/v1/skills/install.ts",
+    "./install-skill-types": "./api/v1/skills/types.ts"
+  },
   "dependencies": {
     "@paperclipai/db": "workspace:*",
+    "@paperclipai/plugin-sdk": "workspace:*",
     "drizzle-orm": "*"
   },
   "devDependencies": {
     "@types/node": "^22",
     "tsx": "^4",
-    "typescript": "^5.9"
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "e2e": "tsx scripts/e2e-install-skill.ts",
     "install-m1-skills": "tsx scripts/install-m1-skills.ts"
   }
