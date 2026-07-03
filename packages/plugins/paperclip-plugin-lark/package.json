@@ -1,0 +1,24 @@
+{
+  "name": "@ai-company/paperclip-plugin-lark",
+  "version": "0.1.0-alpha.0",
+  "type": "module",
+  "private": true,
+  "description": "PaperClip plugin for Lark (Feishu) — approvals bi-directional binding, webhook ingest, chat notifications.",
+  "workspaces": [
+    "worker",
+    "ui"
+  ],
+  "scripts": {
+    "build": "pnpm -r --filter ./worker --filter ./ui build",
+    "typecheck": "pnpm -r --filter ./worker --filter ./ui typecheck"
+  },
+  "keywords": [
+    "paperclip",
+    "plugin",
+    "lark",
+    "feishu",
+    "ai-company"
+  ],
+  "author": "ai-company",
+  "license": "MIT"
+}

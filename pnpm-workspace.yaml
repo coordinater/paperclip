@@ -9,6 +9,9 @@ packages:
   # Keep this smoke fixture installable as a local plugin example without
   # forcing PRs to commit pnpm-lock.yaml for a new workspace importer.
   - "!packages/plugins/examples/plugin-orchestration-smoke-example"
+  # ai-company: dual-workspace plugin (worker + ui) per handoff/03 §W3-D7
+  - packages/plugins/paperclip-plugin-lark/worker
+  - packages/plugins/paperclip-plugin-lark/ui
   - server
   - ui
   - cli

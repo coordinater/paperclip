@@ -1,0 +1,23 @@
+{
+  "name": "@ai-company/paperclip-plugin-lark-worker",
+  "version": "0.1.0-alpha.0",
+  "type": "module",
+  "private": true,
+  "description": "Worker for @ai-company/paperclip-plugin-lark — manifest, webhooks, approval sync, lark client wrapper (all stubs at W3-D7).",
+  "main": "./dist/worker.js",
+  "exports": {
+    ".": "./src/worker.ts",
+    "./manifest": "./src/manifest.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.21",
+    "typescript": "^5.7.3"
+  }
+}
