@@ -1,0 +1,44 @@
+# ai-company project workspace runtime services · canonical template
+#
+# 用途: M1 W2-D6/D7 wire-up · 团队入驻真业务时把本文件内容合并到目标
+#      ai-company project 的 `.paperclip.yaml` 中的 workspaceRuntime 段.
+#
+# schema 版本: paperclip/v1 (与主线 workspace_runtime types 对齐)
+# 参考 packages/shared/src/types/workspace-runtime.ts
+
+workspaceRuntime:
+  services:
+    # ============ W2-D6 codebase-memory-mcp ============
+    - name: codebase-memory-mcp
+      # Persistent MCP server · agent 心跳内查询 codebase 知识图
+      command: codebase-memory-mcp serve --port 9749 --graph-ui-port 9750
+      cwd: "{{workspace.cwd}}"
+      lifecycle: shared    # 共享服务 · 不随每个 issue 重启
+      # 装配前置: install-side-cars.sh (装 codebase-memory-mcp 二进制到 PATH)
+      # 验证: curl http://localhost:9749/health → HTTP 200
+      # MCP tools: 14 个 (structural query / call chain / def-use / cross-service links)
+      # 停止条件: workspace 归档时随 supervisor 停
+
+    # ============ W2-D7 pyrefly ============
+    # Note: pyrefly 是 subprocess-invoked verifier · 严格意义不是 long-running service
+    # 但 workspace_runtime_services 的 lifecycle: ephemeral 允许"按需拉起"语义
+    # 集成路径 A (推荐): claude-code adapter env 加 PATH · 见 claude-code-adapter-env.md
+    # 集成路径 B (兜底): 在此声明为 ephemeral service · 主要用于 heartbeat 内触发 typecheck
+    - name: pyrefly-verifier
+      command: pyrefly check --json --diff-only
+      cwd: "{{workspace.cwd}}"
+      lifecycle: ephemeral  # 按需触发 · 不常驻
+      # 装配前置: pip install pyrefly (Meta Python type checker · https://github.com/facebook/pyrefly)
+      # 验证: pyrefly --version
+      # 触发: agent 提交前 verifier 步骤调 · 或 GitHub Actions CI 调
+
+  jobs:
+    # ============ 未来 M2+ 补 ============
+    # - name: swe-bench-runner (M2 W5-D4 装配后)
+    # - name: agentless-triage-runner (M2 W5-D2 装配后)
+    []
+
+  desiredState: running   # workspace 启动时 auto 起 shared services
+  serviceStates:
+    codebase-memory-mcp: running
+    pyrefly-verifier: manual   # 按需触发 · 不 auto 起
