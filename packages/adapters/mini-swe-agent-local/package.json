@@ -1,0 +1,24 @@
+{
+  "name": "@ai-company/adapter-mini-swe-agent-local",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip external adapter · wraps princeton-nlp/mini-swe-agent Python CLI as a process adapter. M2 W5-D1.",
+  "keywords": ["paperclip", "adapter", "mini-swe-agent", "swe-bench", "ai-company"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/adapter-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

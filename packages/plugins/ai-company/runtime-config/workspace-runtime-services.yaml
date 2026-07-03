@@ -32,13 +32,36 @@ workspaceRuntime:
       # 验证: pyrefly --version
       # 触发: agent 提交前 verifier 步骤调 · 或 GitHub Actions CI 调
 
+    # ============ W5-D3 sandbox (E2B) · SKELETON · blocked on team P1-3 ============
+    # 装配前置：team 补 E2B API key（team-shopping-list.md P1-3）
+    # 装配脚本：pip install --user e2b-code-interpreter 或 docker run e2bdev/code-interpreter
+    # 一旦 team 补 E2B_API_KEY 到 paperclip/.env，取消下段注释：
+    #
+    # - name: e2b-code-interpreter
+    #   command: docker run -d --name e2b-code-interpreter -p 49982:49982 -e E2B_API_KEY=$E2B_API_KEY e2bdev/code-interpreter
+    #   cwd: "{{workspace.cwd}}"
+    #   lifecycle: shared
+    #   # 验证：curl http://localhost:49982/health → HTTP 200
+    #   # 用途：Agentless triage skill step-2 生成的 patch 在沙箱里跑 test（防污染宿主）
+    #   # 与 mini-swe-agent adapter 组合：mini-swe-agent 的 bash tool 出站到 E2B 而非本地 bash
+
   jobs:
+    # ============ W5-D4 SWE-bench harness runner · SKELETON ============
+    # 装配前置：pip install --user swebench + docker
+    # 触发方式：由 W5-D4 benchmarks/swe-bench-subset/run-single.py 调用
+    # 装为 ephemeral job（不是 service）—— 每 instance 起一次 harness 容器
+    #
+    # - name: swe-bench-runner
+    #   kind: job
+    #   command: python benchmarks/swe-bench-subset/run-single.py --instance-id $INSTANCE_ID
+    #   cwd: "{{workspace.cwd}}"
+
     # ============ 未来 M2+ 补 ============
-    # - name: swe-bench-runner (M2 W5-D4 装配后)
     # - name: agentless-triage-runner (M2 W5-D2 装配后)
     []
 
   desiredState: running   # workspace 启动时 auto 起 shared services
   serviceStates:
     codebase-memory-mcp: running
-    pyrefly-verifier: manual   # 按需触发 · 不 auto 起
+    pyrefly-verifier: manual         # 按需触发 · 不 auto 起
+    # e2b-code-interpreter: manual   # W5-D3 装了取消注释
