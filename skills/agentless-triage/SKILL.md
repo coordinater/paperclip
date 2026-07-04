@@ -4,10 +4,12 @@ description: >
   Three-step Agentless-style SWE-bench triage workflow for fixing code issues:
   (1) localize candidate files from the issue description, (2) generate a repair
   patch, (3) validate by running tests. Falls back to step-1 on failure.
-  Use this skill when an issue needs a diagnostic + repair pass without a
-  long-horizon multi-tool agent —— Agentless outperforms full agents on
-  SWE-bench Lite by staying prompt-simple. Trigger with `/agentless-triage`
-  or when handling a SWE-bench-style issue.
+  Two execution modes: Mode A single-adapter (original, all three prompts inside
+  one adapter run) and Mode B issue-tree (M4-04 · parent issue + 3 child issues
+  + issue_approvals gate on validate). Use this skill when an issue needs a
+  diagnostic + repair pass without a long-horizon multi-tool agent —— Agentless
+  outperforms full agents on SWE-bench Lite by staying prompt-simple. Trigger
+  with `/agentless-triage` or when handling a SWE-bench-style issue.
 ---
 
 # Agentless Triage Skill
@@ -15,6 +17,17 @@ description: >
 You are executing a three-step Agentless-style triage on a code issue. This skill borrows the pattern from **OpenAutoCoder/Agentless** (arxiv 2407.01489) —— stay minimal, stay explicit, iterate on failure.
 
 **Design principle**: Don't be an agent. Be three separate prompts. Each one gets fresh context, does one job, hands off structured output to the next.
+
+## Two execution modes
+
+| Mode | When to use | Where the loop lives | Audit granularity |
+|---|---|---|---|
+| **A · single-adapter** (original) | SWE-bench batch sweeps · disposable one-shots · no human review needed | Inside one adapter run (this SKILL.md `## Workflow` section) | one `activity_log` chain for the whole triage |
+| **B · issue-tree** (M4-04) | Real project issue · downstream `hire_reviewer` needed · want per-step checkout / budget attribution | Across paperclip issue tree (parent + 3 children · loop at parent level) | per-child `activity_log` + per-child checkout owner + `issue_approvals` gate on validate |
+
+- **Default**: Mode A (for backward compat with M2/M3 SWE-bench pipeline)
+- **Prefer Mode B when**: (a) issue originates from a real project (not benchmark corpus), (b) `code-review` skill or human review is desired, (c) each step should have its own budget draw / checkout owner
+- **Mode B setup**: read `references/issue-tree-template.md` for the parent + 3-child spawn recipe, and `references/approval-gate.md` for the validate → `hire_reviewer` wire-up. Both files reuse the same three prompt templates (localize / repair / validate) — Mode B just wraps them as sub-issues.
 
 ## The three steps
 
@@ -105,9 +118,12 @@ Emit a single JSON blob at the end:
 
 ## References
 
-- `references/step-1-localize.md` —— localize prompt template
-- `references/step-2-repair.md` —— repair prompt template
-- `references/step-3-validate.md` —— validate prompt template
+- `references/step-1-localize.md` —— localize prompt template (used by both modes)
+- `references/step-2-repair.md` —— repair prompt template (used by both modes)
+- `references/step-3-validate.md` —— validate prompt template (used by both modes)
+- `references/issue-tree-template.md` —— **Mode B** tree spawn recipe (M4-04)
+- `references/approval-gate.md` —— **Mode B** validate → `hire_reviewer` approval wire-up (M4-04)
 - Origin: Agentless paper (arxiv 2407.01489) —— [OpenAutoCoder/Agentless](https://github.com/OpenAutoCoder/Agentless)
-- Handbook: `handoff/04-施工手册-M2.md` §W5.D2
-- Related adapter: `packages/adapters/mini-swe-agent-local/` (M2 W5-D1 · likely runner for this skill)
+- Handbook: `handoff/04-施工手册-M2.md` §W5.D2 (original) · `handoff/05-施工手册-M3+.md` §M4-04 (issue-tree upgrade)
+- Related adapter: `packages/adapters/mini-swe-agent-local/` (M2 W5-D1 · likely runner for Mode A)
+- Related plugin (issue-tree pattern reference): `packages/plugins/magis-lite-plugin/src/orchestrator.ts` (M3-02 · MAGIS-lite pure orchestrator · Mode B tree shape follows same convention)

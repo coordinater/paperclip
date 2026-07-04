@@ -1,0 +1,23 @@
+{
+  "name": "@ai-company/paperclip-plugin-twenty-crm",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · Twenty CRM (self-hosted · GraphQL-first · deep integration). M4-03 kick-off · PRD only · M5+ MVP装配.",
+  "keywords": ["paperclip", "plugin", "twenty", "crm", "open-source", "ai-company"],
+  "exports": {
+    "./manifest": "./src/manifest.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}
