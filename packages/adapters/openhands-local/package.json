@@ -1,0 +1,24 @@
+{
+  "name": "@ai-company/adapter-openhands-local",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip external adapter · wraps All-Hands-AI/OpenHands CLI + Docker runtime + event JSONL → activity_log event mapper. M3-01.",
+  "keywords": ["paperclip", "adapter", "openhands", "swe-bench", "ai-company"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/adapter-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

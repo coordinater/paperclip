@@ -1,0 +1,39 @@
+# SWE-Bench-CL · Config A · Baseline (no memory carry-over) · M3-05 PRD skeleton
+#
+# 用于产出"continual 无记忆"的 baseline · 与 config-cl-{b,c} 对比
+# **PRD 阶段 · yaml 只是骨架 · run-cl.py 未实现 · M4 起装配**
+
+label: "config-cl-a"
+description: "Continual · no memory carry-over · baseline (equivalent to M2 W5-D4 subset if order is fixed)"
+
+# 与 M2 W5-D4 base config 相同 adapter 段
+adapters:
+  - type: "claude_local"
+    weight: 1.0
+    hire_role: "deep-swe"
+    config:
+      model: "claude-sonnet-4-5"
+      timeoutSec: 900
+
+# Continual learning 特有段
+ordering:
+  strategy: "time_ordered"
+  # time_ordered / dependency_ordered / custom_order
+  # See PRD §4.1
+
+memory_policy:
+  strategy: "no_memory"
+  # no_memory / carry_cognee / carry_both / carry_selective
+  # See PRD §4.2 · A 档 = no_memory (baseline)
+
+adaptation_rate:
+  sliding_window_k: 5
+
+output:
+  results_dir: "results/config-cl-a"
+  summary_path: "results/config-cl-a/summary.json"
+  adaptation_rate_path: "results/config-cl-a/adaptation-rate.json"
+
+budget:
+  max_wall_time_min_per_instance: 60
+  max_total_wall_time_min: 480    # 8 小时上限

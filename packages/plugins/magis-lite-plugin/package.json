@@ -1,0 +1,26 @@
+{
+  "name": "@ai-company/paperclip-plugin-magis-lite",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · MAGIS-lite POC · 4-agent org tree (Manager / Repository Custodian / Developer / QA) + reports_to hierarchy + issue-tree decomposition + plugin_state shared memory. M3-02.",
+  "keywords": ["paperclip", "plugin", "magis", "multi-agent", "ai-company"],
+  "exports": {
+    ".": "./src/worker.ts",
+    "./manifest": "./src/manifest.ts",
+    "./roles": "./src/roles.ts",
+    "./orchestrator": "./src/orchestrator.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}
