@@ -1,0 +1,25 @@
+{
+  "name": "@ai-company/paperclip-plugin-meridian-http",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · calls Google Meridian MMM via a FastAPI wrapper. M2 W7-D3 (Marketing Mix Modeling · 科学层).",
+  "keywords": ["paperclip", "plugin", "meridian", "mmm", "marketing", "ai-company"],
+  "exports": {
+    ".": "./src/worker.ts",
+    "./manifest": "./src/manifest.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}
