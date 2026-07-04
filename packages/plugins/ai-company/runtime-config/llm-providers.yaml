@@ -1,0 +1,64 @@
+# ai-company · LLM providers · M2 W8-D2
+#
+# 用途：给 ai-company 项目声明 canonical LLM provider 列表 · 在 agent config
+# 里挑一个 provider name 就能跑对应模型 · handbook §W8.D2 目标 = "agent 能切到
+# 火山方舟 API 跑一次 completion".
+#
+# 加载：paperclip 主线支持从 workspace runtime config 读 provider 列表 · 也
+# 可能是从 company_secrets + config yaml 混合加载. 本 yaml 提供 canonical
+# 声明 · 团队 M3+ 入驻真业务时把它 copy 到目标 project 的 .paperclip.yaml
+# `workspaceRuntime.llmProviders` 段.
+#
+# **secrets ref 语义**（company_secrets.<key>）：
+#   - api_key_ref 是 secret ref · 而不是 raw key（06 §6 secrets 管理）
+#   - team 补 API key 时把值 upsert 到 company_secrets · 不改本 yaml
+
+llmProviders:
+  # ============ M2 W8-D2 · 火山方舟 (VolcEngine Ark) · 手册 §W8.D2 ============
+  # 用于中文场景 · 支持 doubao / deepseek / qwen 三大 model family
+  # team 补 key 前置：https://console.volcengine.com/ark/apiKey 建 API key
+  #                   → upsert 到 company_secrets.volcengine_ark_key
+  - name: volcengine_ark
+    displayName: "火山方舟 (VolcEngine Ark)"
+    endpoint: "https://ark.cn-beijing.volces.com/api/v3"
+    api_key_ref: "company_secrets.volcengine_ark_key"
+    api_style: "openai-compatible"   # 走 openai chat/completions 兼容格式
+    region: "cn-beijing"
+    models:
+      - id: "doubao-1.5-pro-256k"
+        displayName: "Doubao 1.5 Pro (256k context)"
+        context_length: 262144
+        supports_streaming: true
+      - id: "doubao-1.5-lite-32k"
+        displayName: "Doubao 1.5 Lite (32k)"
+        context_length: 32768
+      - id: "deepseek-v3-241226"
+        displayName: "DeepSeek V3 (2024-12-26)"
+        context_length: 65536
+      - id: "qwen-plus"
+        displayName: "Qwen Plus"
+        context_length: 32768
+    default_model: "doubao-1.5-pro-256k"
+    tags: ["chinese", "cost-effective", "cn-region"]
+
+  # ============ 未来 M2+ 追加 provider ============
+  # - name: dashscope  (Alibaba)
+  # - name: baichuan
+  # - name: minimax_m2
+
+# 使用示例（agent adapterConfig 里挑 provider）：
+#
+#   POST /api/companies/:cid/agents
+#   {
+#     "name": "cn-marketing-agent",
+#     "adapterType": "claude_local",
+#     "adapterConfig": {
+#       "llmProvider": "volcengine_ark",
+#       "model": "doubao-1.5-pro-256k",
+#       "timeoutSec": 900
+#     }
+#   }
+#
+# 主线 adapter 需要支持 llmProvider 字段 · M1/M2 三剑客 adapter 走 CLI OAuth
+# 不接第三方 provider · 想跑 volcengine_ark 需要新 adapter 或 hermes-gateway
+# 走 openai-compatible 路径（M3+ 事项 · 见 handbook §M3 引入 provider adapter）

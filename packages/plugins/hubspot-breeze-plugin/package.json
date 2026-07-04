@@ -1,0 +1,25 @@
+{
+  "name": "@ai-company/paperclip-plugin-hubspot-breeze",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · HubSpot Breeze API (Contacts + Deals + Workflow triggers). M2 W8-D3.",
+  "keywords": ["paperclip", "plugin", "hubspot", "crm", "ai-company"],
+  "exports": {
+    ".": "./src/worker.ts",
+    "./manifest": "./src/manifest.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

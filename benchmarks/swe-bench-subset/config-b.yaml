@@ -1,0 +1,42 @@
+# M2 W8-D5 · Config B · 三剑客 + cognee side-car
+#
+# 增量：Config A + cognee side-car MCP · agent 心跳内可查 codebase 知识图.
+# 用于测 "cognee 独立贡献"（B - A = cognee 提升的 verified 率）.
+
+label: "config-b"
+description: "三剑客 + cognee · 无 Agentless"
+
+adapters:
+  - type: "claude_local"
+    weight: 1.0
+    hire_role: "deep-swe"
+    config:
+      model: "claude-sonnet-4-5"
+      timeoutSec: 900
+  - type: "codex_local"
+    weight: 1.0
+    hire_role: "fast-fix"
+    config:
+      model: "gpt-4o"
+      timeoutSec: 900
+
+sidecars:
+  - name: "cognee"
+    endpoint: "http://localhost:8000"
+    health_probe: "/health"
+    required: true
+    role: "memory_mcp"
+
+skills: []            # 无 Agentless triage · 单纯 cognee 增量
+
+routing:
+  strategy: "round_robin"
+
+output:
+  results_dir: "results/config-b"
+  raw_trajectory_dir: "results/config-b/trajectories"
+  summary_path: "results/config-b/summary.json"
+
+budget:
+  max_wall_time_min: 60
+  max_total_wall_time_min: 240

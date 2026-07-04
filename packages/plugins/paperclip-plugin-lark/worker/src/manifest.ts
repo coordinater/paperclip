@@ -16,6 +16,17 @@ import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
 
 export const PLUGIN_ID = "ai-company.paperclip-plugin-lark";
 export const APPROVAL_TYPE_HIRE_AGENT = "hire_agent";
+// M2 W8-D4 · 手册 §W8.D4：三类 approval 双向绑定扩展
+export const APPROVAL_TYPE_CEO_STRATEGY = "ceo_strategy";
+export const APPROVAL_TYPE_BUDGET_INCIDENT = "budget_incident";
+
+/** All approval types this plugin routes. Extend by adding a constant + entry here + a handler in approval-router.ts. */
+export const APPROVAL_TYPES_ROUTED = [
+  APPROVAL_TYPE_HIRE_AGENT,
+  APPROVAL_TYPE_CEO_STRATEGY,
+  APPROVAL_TYPE_BUDGET_INCIDENT,
+] as const;
+export type RoutedApprovalType = (typeof APPROVAL_TYPES_ROUTED)[number];
 
 const manifest: PaperclipPluginManifestV1 = {
   id: PLUGIN_ID,

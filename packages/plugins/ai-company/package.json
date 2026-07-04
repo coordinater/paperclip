@@ -31,6 +31,7 @@
     "install-m2-w5-skills": "tsx scripts/install-m2-w5-skills.ts",
     "install-m2-w6-skills": "tsx scripts/install-m2-w6-skills.ts",
     "install-m2-w7-skills": "tsx scripts/install-m2-w7-skills.ts",
+    "install-m2-w8-skills": "tsx scripts/install-m2-w8-skills.ts",
     "convert-cursorrules": "tsx scripts/convert-cursorrules-to-skills.ts"
   }
 }

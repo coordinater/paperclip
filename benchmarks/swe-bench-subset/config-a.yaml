@@ -1,0 +1,50 @@
+# M2 W8-D5 · Config A · 三剑客 only (baseline)
+#
+# 手册 §W8.D5 语义：无 side-car · 无 Agentless · 纯 CLI adapter direct hire.
+# 用于生成 baseline · 与 B/C 对比出 "cognee 贡献" 与 "Agentless 贡献" 的增量.
+#
+# 三剑客：claude-code / codex / cursor
+# 由于 Cursor CLI 目前未装（P1-1 未补 · 见 team-shopping-list）· 实跑时降级到
+# 2/3 剑客并在 summary 里显式标注 "缺 Cursor 一维".
+# 若 M2 W5-D1 mini-swe-agent adapter 就位（等 team P1-5）则做 3/3 + mini-swe 4-way.
+
+label: "config-a"
+description: "三剑客 only · baseline · 无 side-car · 无 Agentless"
+
+adapters:
+  - type: "claude_local"
+    weight: 1.0
+    hire_role: "deep-swe"
+    config:
+      model: "claude-sonnet-4-5"
+      timeoutSec: 900
+  - type: "codex_local"
+    weight: 1.0
+    hire_role: "fast-fix"
+    config:
+      model: "gpt-4o"
+      timeoutSec: 900
+  # Cursor 未装 · P1-1 · 跑时显式跳过 · summary 记录 "3rd 剑客缺"
+  # - type: "cursor"
+  #   weight: 1.0
+  #   hire_role: "visual-analyst"
+  #   config:
+  #     model: "cursor-default"
+  #     timeoutSec: 900
+
+sidecars: []          # 无 side-car
+skills: []            # 无 Agentless triage · 无其他
+
+routing:
+  # Instance → adapter 分配策略
+  # M2 W8 简化：轮转分配 · 每个 adapter 均分 instance list
+  strategy: "round_robin"
+
+output:
+  results_dir: "results/config-a"
+  raw_trajectory_dir: "results/config-a/trajectories"
+  summary_path: "results/config-a/summary.json"
+
+budget:
+  max_wall_time_min: 60    # 每 instance 60 min 硬限
+  max_total_wall_time_min: 240   # 全批次 4 小时上限
