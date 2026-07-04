@@ -1,0 +1,23 @@
+{
+  "name": "@ai-company/paperclip-plugin-genome",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · L4 Genome library + AlphaEvolve loop · pattern sampling + evaluator agent + decay. M5-03 kick-off · PRD only · M5+ MVP装配.",
+  "keywords": ["paperclip", "plugin", "genome", "alpha-evolve", "l4-evolution", "ai-company"],
+  "exports": {
+    "./manifest": "./src/manifest.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

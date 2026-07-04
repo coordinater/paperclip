@@ -1,0 +1,20 @@
+{
+  "name": "@ai-company/adapter-autogen-local",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip external adapter · wraps Microsoft AutoGen (autogen-agentchat 0.4+) CLI · flexible group-chat multi-agent framework. M5-01 kick-off · rules-gated on M4-01.",
+  "keywords": ["paperclip", "adapter", "autogen", "microsoft", "multi-agent", "ai-company"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/adapter-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

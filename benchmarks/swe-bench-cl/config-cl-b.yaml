@@ -1,0 +1,43 @@
+# SWE-Bench-CL · Config B · Carry cognee only (memory carry-over B) · M5-04 MVP scaffold
+#
+# 用于测 cognee 的独立 continual 贡献
+# 与 config-cl-a (no_memory baseline) 对比 · 差值 = cognee 记忆层增益
+# **M4 SWE-bench W8-D5 三配置 baseline 到齐 · rules-frozen (D-M3-01 / D-M3-02) apply 后启动**
+
+label: "config-cl-b"
+description: "Continual · carry cognee (wipe mem0 if present) · measures cognee's independent contribution"
+
+adapters:
+  - type: "claude_local"
+    weight: 1.0
+    hire_role: "deep-swe"
+    config:
+      model: "claude-sonnet-4-5"
+      timeoutSec: 900
+
+ordering:
+  strategy: "time_ordered"
+  # See PRD §4.1 · same as config-cl-a for direct comparability
+
+memory_policy:
+  strategy: "carry_cognee"
+  # keep cognee vector index across instances · wipe conversation state
+  # See PRD §4.2 · B 档
+  cognee:
+    wipe_between_instances: false
+    conversation_wipe: true
+  mem0:
+    # if D-M3-01 = 装 mem0 · Config B still wipes it (isolate cognee vs mem0)
+    wipe_between_instances: true
+
+adaptation_rate:
+  sliding_window_k: 5
+
+output:
+  results_dir: "results/config-cl-b"
+  summary_path: "results/config-cl-b/summary.json"
+  adaptation_rate_path: "results/config-cl-b/adaptation-rate.json"
+
+budget:
+  max_wall_time_min_per_instance: 60
+  max_total_wall_time_min: 480

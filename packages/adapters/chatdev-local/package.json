@@ -1,0 +1,20 @@
+{
+  "name": "@ai-company/adapter-chatdev-local",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip external adapter · wraps OpenBMB/ChatDev CLI · CEO/CTO/Programmer/Reviewer/Tester organizational tree with Chain-of-Communication. M4-01 kick-off · candidate B · rules-gated on D-M3-01/02.",
+  "keywords": ["paperclip", "adapter", "chatdev", "multi-agent", "ai-company"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/adapter-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

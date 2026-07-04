@@ -1,0 +1,43 @@
+# SWE-Bench-CL · Config C · Carry both (memory carry-over C) · M5-04 MVP scaffold
+#
+# 用于测全栈 continual · cognee + mem0（若 mem0 装配）
+# 与 config-cl-b 对比 · 差值 = mem0 增量贡献（在 cognee 之上）
+# **必须 D-M3-01 = B 或 C 档（mem0 已装）才有意义 · 否则等效 config-cl-b**
+
+label: "config-cl-c"
+description: "Continual · carry both cognee + mem0 · full-stack memory · measures mem0 marginal contribution over cognee"
+
+adapters:
+  - type: "claude_local"
+    weight: 1.0
+    hire_role: "deep-swe"
+    config:
+      model: "claude-sonnet-4-5"
+      timeoutSec: 900
+
+ordering:
+  strategy: "time_ordered"
+
+memory_policy:
+  strategy: "carry_both"
+  cognee:
+    wipe_between_instances: false
+    conversation_wipe: false
+  mem0:
+    # D-M3-01 == 装 mem0 时才有效
+    wipe_between_instances: false
+    layer: "conversation"   # conversation / episodic / semantic
+
+adaptation_rate:
+  sliding_window_k: 5
+
+output:
+  results_dir: "results/config-cl-c"
+  summary_path: "results/config-cl-c/summary.json"
+  adaptation_rate_path: "results/config-cl-c/adaptation-rate.json"
+
+budget:
+  max_wall_time_min_per_instance: 60
+  max_total_wall_time_min: 480
+
+# TODO(team-verify): mem0 API shape · 待 D-M3-01 装 mem0 后 team 反馈实际接口

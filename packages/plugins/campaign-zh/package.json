@@ -1,0 +1,23 @@
+{
+  "name": "@ai-company/paperclip-plugin-campaign-zh",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · Chinese-market campaign workflow · depends on campaign-workflow (M2 W7-D1) + wewrite (M2 W8-D1) + volcengine_ark (M2 W8-D2). M5-02 kick-off · PRD only.",
+  "keywords": ["paperclip", "plugin", "campaign", "chinese", "e2", "ai-company"],
+  "exports": {
+    "./manifest": "./src/manifest.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

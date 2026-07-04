@@ -1,0 +1,20 @@
+{
+  "name": "@ai-company/adapter-metagpt-local",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip external adapter · wraps geekan/MetaGPT CLI · 4-role SOP-driven (PM/Architect/Engineer/QA). M4-01 kick-off · candidate A · rules-gated on D-M3-01/02.",
+  "keywords": ["paperclip", "adapter", "metagpt", "multi-agent", "ai-company"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/adapter-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}
