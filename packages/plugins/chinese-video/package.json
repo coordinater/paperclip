@@ -1,0 +1,21 @@
+{
+  "name": "@ai-company/paperclip-plugin-chinese-video",
+  "version": "0.0.1-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Paperclip plugin · Chinese short video/image agent (E1) · 抖音/小红书/微信视频号/公众号 · M6-01 MVP scaffold · M3-03 kick-off.",
+  "keywords": ["paperclip", "plugin", "chinese", "short-video", "e1", "ai-company"],
+  "exports": { "./manifest": "./src/manifest.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.9",
+    "vitest": "^4.1.8"
+  }
+}

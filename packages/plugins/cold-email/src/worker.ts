@@ -212,7 +212,7 @@ function parseBounceInput(
  * Multilingual keyword match · additive · false positives accepted (safe side).
  */
 export function detectUnsubscribeIntent(replyBody: string): boolean {
-  const keywords = [
+  const substringKeywords = [
     "unsubscribe",
     "please stop",
     "remove me",
@@ -223,8 +223,15 @@ export function detectUnsubscribeIntent(replyBody: string): boolean {
     "sortez-moi",
     "désabonner",
   ];
+  // Word-boundary keywords · match reply body of just "STOP" but not "one-stop shop"
+  const wordBoundaryKeywords = ["stop"];
   const lower = replyBody.toLowerCase();
-  return keywords.some((k) => lower.includes(k.toLowerCase()));
+  if (substringKeywords.some((k) => lower.includes(k.toLowerCase()))) return true;
+  for (const k of wordBoundaryKeywords) {
+    const re = new RegExp(`(^|\\s|[.,!?;:])${k}(\\s|$|[.,!?;:])`, "i");
+    if (re.test(lower)) return true;
+  }
+  return false;
 }
 
 // ---------------------------------------------------------------------------

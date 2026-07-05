@@ -26,8 +26,6 @@ const manifest: PaperclipPluginManifestV1 = {
     "activity.log.write",
     "http.outbound",
     "secrets.read-ref",
-    "entities.read",
-    "entities.write",
   ],
   entrypoints: {
     worker: "./dist/worker.js",

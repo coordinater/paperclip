@@ -19,7 +19,7 @@ const manifest: PaperclipPluginManifestV1 = {
   description:
     "Open-source cold-email outreach agent · issue state machine + routines cron + GDPR/CAN-SPAM/PIPL compliance. M4-02.",
   author: "ai-company",
-  categories: ["agent"],
+  categories: ["automation"],
   capabilities: [
     "webhooks.receive",
     "plugin.state.read",
@@ -28,9 +28,10 @@ const manifest: PaperclipPluginManifestV1 = {
     "http.outbound",
     "secrets.read-ref",
     "issues.read",
-    "issues.write",
-    "routines.register",
-    "actions.register",
+    "issues.create",
+    "issues.update",
+    "routines.managed",
+    "ui.action.register",
   ],
   entrypoints: {
     worker: "./dist/worker.js",
@@ -61,36 +62,12 @@ const manifest: PaperclipPluginManifestV1 = {
         "GET /unsubscribe?token=<hmac> → mark recipient as unsubscribed · idempotent",
     },
   ],
-  routines: [
-    {
-      key: "warmup-tick",
-      cron: "*/15 * * * *",
-      displayName: "Warmup pool tick",
-      description:
-        "Sends the next drop from warmup pool per pacing rules (max N/day/domain)",
-    },
-    {
-      key: "reply-sweep",
-      cron: "0 * * * *",
-      displayName: "Reply sweep",
-      description:
-        "Sweeps IMAP or email API for replies not caught via webhook · idempotent",
-    },
-    {
-      key: "bounce-sweep",
-      cron: "0 6 * * *",
-      displayName: "Bounce sweep",
-      description:
-        "Aggregates bounces from provider · updates recipient state",
-    },
-    {
-      key: "compliance-audit",
-      cron: "0 0 * * 0",
-      displayName: "Compliance retention audit",
-      description:
-        "Runs GDPR/PIPL retention audit · removes records beyond retention window",
-    },
-  ],
+  // NOTE(M5+ wire-up): routines schedule declarations moved to worker install-time.
+  // See PluginManagedRoutineDeclaration in shared/src/types/plugin.ts for the full shape
+  // (routineKey + title + triggers[] with cronExpression + assigneeRef + projectRef).
+  // Current dispatchRoutine() in worker.ts handles the 4 tick semantics · manifest wire-up
+  // at real install-time (M5+ · P1-14 shopping list unlocks).
+  // Ticks: warmup-tick */15 · reply-sweep 0 * · bounce-sweep 0 6 · compliance-audit 0 0 * * 0
 };
 
 export default manifest;

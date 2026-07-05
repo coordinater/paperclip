@@ -13,16 +13,14 @@ const manifest: PaperclipPluginManifestV1 = {
   description:
     "L4 evolution layer · Genome library + AlphaEvolve loop · sampling / evaluator / decay routines. M5-03.",
   author: "ai-company",
-  categories: ["agent"],
+  categories: ["automation"],
   capabilities: [
     "webhooks.receive",
     "plugin.state.read",
     "plugin.state.write",
     "activity.log.write",
-    "activity.log.read",
-    "entities.read",
-    "entities.write",
-    "routines.register",
+    "activity.read",
+    "routines.managed",
     "issues.read",
   ],
   entrypoints: {
@@ -42,32 +40,10 @@ const manifest: PaperclipPluginManifestV1 = {
         "agent 开工前查询这类 issue 有哪些 pattern 可复用 · return top-K sorted by score",
     },
   ],
-  routines: [
-    {
-      key: "sampling-tick",
-      cron: "*/30 * * * *",
-      displayName: "Sampling tick",
-      description: "扫 activity_log 抽 candidate pattern",
-    },
-    {
-      key: "evaluation-tick",
-      cron: "*/60 * * * *",
-      displayName: "Evaluation tick",
-      description: "evaluator 打分 candidate · 高分入库 · 低分丢弃",
-    },
-    {
-      key: "decay-tick",
-      cron: "0 0 * * *",
-      displayName: "Decay tick",
-      description: "Genome 库 pattern score 衰减",
-    },
-    {
-      key: "swe-bench-cl-tick",
-      cron: "0 3 * * 0",
-      displayName: "SWE-Bench-CL weekly tick",
-      description: "定期跑 SWE-Bench-CL 子集 · 验证 L4 环有效性",
-    },
-  ],
+  // NOTE(M5+ wire-up): routines schedule declarations moved to install-time
+  // per PluginManagedRoutineDeclaration full shape (routineKey + title + triggers[]
+  // with cronExpression). dispatchRoutine() in worker.ts handles the 4 tick semantics.
+  // Ticks: sampling-tick */30 · evaluation-tick */60 · decay-tick daily · swe-bench-cl-tick weekly
 };
 
 export default manifest;

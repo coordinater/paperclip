@@ -17,7 +17,7 @@ const manifest: PaperclipPluginManifestV1 = {
   description:
     "中文短视频/图文 agent · 抖音/小红书/微信视频号/公众号 · M6-01 MVP scaffold.",
   author: "ai-company",
-  categories: ["agent"],
+  categories: ["automation"],
   capabilities: [
     "webhooks.receive",
     "plugin.state.read",
@@ -26,7 +26,8 @@ const manifest: PaperclipPluginManifestV1 = {
     "http.outbound",
     "secrets.read-ref",
     "issues.read",
-    "issues.write",
+    "issues.create",
+    "issues.update",
   ],
   entrypoints: { worker: "./dist/worker.js" },
   webhooks: [
